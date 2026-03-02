@@ -21,7 +21,7 @@ const Hero = () => {
                     transition={{ duration: 0.5, delay: 0.1 }}
                     className="text-5xl md:text-7xl font-bold text-foreground mb-4 tracking-tight"
                 >
-                    John Doe.
+                    Prerna Soni.
                 </motion.h1>
 
                 <motion.h2
@@ -30,7 +30,7 @@ const Hero = () => {
                     transition={{ duration: 0.5, delay: 0.2 }}
                     className="text-4xl md:text-6xl font-bold text-muted-foreground mb-6 tracking-tight"
                 >
-                    I build things for the web.
+                    I build modern web.
                 </motion.h2>
 
                 <motion.p
@@ -39,7 +39,7 @@ const Hero = () => {
                     transition={{ duration: 0.5, delay: 0.3 }}
                     className="text-lg text-muted-foreground mb-10 max-w-2xl leading-relaxed"
                 >
-                    I'm a frontend developer specializing in building (and occasionally designing) exceptional digital experiences. Currently, I'm focused on building accessible, human-centered products.
+                    I am a Frontend Developer specializing in creating clean, responsive, and user-focused web applications.Specializing in translating Figma designs into responsive user applications.I also integrate AI-powered features to enhance user experiences.
                 </motion.p>
 
                 <motion.div

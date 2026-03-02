@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import SectionTitle from '../components/SectionTitle';
 
 const skillsData = [
-    { category: 'Frontend', items: ['React', 'Next.js', 'Tailwind CSS', 'Framer Motion', 'TypeScript', 'Redux'] },
-    { category: 'Backend', items: ['Node.js', 'Express', 'MongoDB', 'PostgreSQL', 'RESTful APIs', 'GraphQL'] },
-    { category: 'Tools', items: ['Git', 'GitHub', 'Vercel', 'Figma', 'Docker', 'Jest'] },
-    { category: 'Other', items: ['Responsive Design', 'Web Accessibility', 'Agile/Scrum', 'SEO Optimization'] }
+    { category: 'Frontend', items: ['React', 'Next.js', 'Tailwind CSS', 'Framer Motion', 'TypeScript', 'Antigravity'] },
+    { category: 'Backend', items: ['Node.js', 'Express', 'MongoDB', 'Supabase Integration'] },
+    { category: 'Tools', items: ['Git', 'GitHub', 'Vercel', 'Figma', 'VS Code', 'Jest'] },
+    { category: 'Other', items: ['Responsive Design', 'Web Accessibility', 'UI/UX Implementation', 'SEO Optimization', 'AI-powered Features Integration'] }
 ];
 
 const containerVariants = {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import SectionTitle from '../components/SectionTitle';
+import profilePic from '../assets/images/profile.jpg';
 
 const About = () => {
     return (
@@ -18,7 +19,7 @@ const About = () => {
                     <div className="relative w-64 h-64 md:w-80 md:h-80 mx-auto">
                         <div className="absolute inset-0 bg-primary-600 rounded-2xl transform translate-x-4 translate-y-4"></div>
                         <img
-                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            src={profilePic}
                             alt="Profile"
                             className="relative z-10 rounded-2xl object-cover w-full h-full border-4 border-background shadow-xl grayscale hover:grayscale-0 transition-all duration-500"
                         />
@@ -33,13 +34,13 @@ const About = () => {
                     className="md:w-1/2 space-y-4"
                 >
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                        Hello! My name is John and I enjoy creating things that live on the internet. My interest in web development started back in 2012 when I decided to try editing custom Tumblr themes — turns out hacking together HTML & CSS taught me a lot about HTML & CSS!
+                        I’m Prerna Soni, a Frontend Developer specializing in building responsive, user-centric web applications. I excel at translating Figma designs into React applications while ensuring accessible, intuitive, and engaging user interfaces. I also leverage AI-powered features to enhance interactivity.
                     </p>
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                        Fast-forward to today, and I've had the privilege of working at an advertising agency, a start-up, and a huge corporation. My main focus these days is building accessible, inclusive products and digital experiences for a variety of clients.
+                        Through a range of projects, I deliver solutions that are both technically robust and thoughtfully designed for the user.
                     </p>
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                        When I'm not at the computer, I'm usually hanging out with my dog, reading, or exploring nature.
+                        Beyond coding, I am passionate about exploring emerging web technologies, optimizing user experiences, and continuously refining my craft.
                     </p>
                 </motion.div>
             </div>

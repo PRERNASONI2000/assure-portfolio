@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 import { motion } from 'framer-motion';
-import { Send, MapPin, Phone, Mail } from 'lucide-react';
+import { Send, MapPin, Linkedin, Mail, Github } from 'lucide-react';
 import SectionTitle from '../components/SectionTitle';
 
 const Contact = () => {
@@ -79,31 +79,31 @@ const Contact = () => {
                     <div className="space-y-6">
                         <div className="flex items-center space-x-4">
                             <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full text-primary-600 dark:text-primary-500">
-                                <Phone size={24} className="transition-transform duration-300 hover:scale-125 hover:rotate-12" />
+                                <a href="https://www.linkedin.com/in/prerna-soni-472a9323a"><Linkedin size={24} className="transition-transform duration-300 hover:scale-125 hover:-translate-y-1" /></a>
                             </div>
                             <div>
-                                <p className="text-foreground font-medium">Phone</p>
-                                <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                                <p className="text-foreground font-medium">Linkedin</p>
+                                <p className="text-muted-foreground">Connect with me</p>
                             </div>
                         </div>
 
                         <div className="flex items-center space-x-4">
                             <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full text-primary-600 dark:text-primary-500">
-                                <Mail size={24} className="transition-transform duration-300 hover:scale-125 hover:-rotate-12" />
+                                <a href="mailto:prernasoni2000@gmail.com"> <Mail size={24} className="transition-transform duration-300 hover:scale-125 hover:-rotate-12" /></a>
                             </div>
                             <div>
                                 <p className="text-foreground font-medium">Email</p>
-                                <p className="text-muted-foreground">hello@example.com</p>
+                                <p className="text-muted-foreground">prernasoni2000@gmail.com</p>
                             </div>
                         </div>
 
                         <div className="flex items-center space-x-4">
                             <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full text-primary-600 dark:text-primary-500">
-                                <MapPin size={24} className="transition-transform duration-300 hover:scale-125 hover:-translate-y-1" />
+                                <a href="https://github.com/PRERNASONI2000"><Github size={24} className="transition-transform duration-300 hover:scale-125 hover:-translate-y-1" /></a>
                             </div>
                             <div>
-                                <p className="text-foreground font-medium">Location</p>
-                                <p className="text-muted-foreground">San Francisco, CA</p>
+                                <p className="text-foreground font-medium">Github</p>
+                                <p className="text-muted-foreground">View my projects</p>
                             </div>
                         </div>
                     </div>

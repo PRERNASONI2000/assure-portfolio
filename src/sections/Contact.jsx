@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from "../supabaseClient";
+import emailjs from '@emailjs/browser';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, MapPin, Linkedin, Mail, Github, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import SectionTitle from '../components/SectionTitle';
@@ -11,8 +12,8 @@ const Notification = ({ message, type, onClose }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
             className={`fixed top-24 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl backdrop-blur-md border ${type === 'success'
-                    ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400'
-                    : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
+                ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400'
+                : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
                 }`}
         >
             {type === 'success' ? <CheckCircle size={20} className="text-green-500" /> : <AlertCircle size={20} className="text-red-500" />}
@@ -71,14 +72,16 @@ const Contact = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission behavior
 
+        // 1. Validate form fields (all required, email format)
         if (!validateForm()) return;
 
-        setLoading(true);
+        setLoading(true); // Show loader
 
         try {
-            const { error } = await supabase
+            // 2. Save data to Supabase table 'contacts'
+            const { error: supabaseError } = await supabase
                 .from("contacts")
                 .insert([{
                     name: formData.name,
@@ -87,16 +90,40 @@ const Contact = () => {
                     message: formData.message,
                 }]);
 
-            if (error) throw error;
+            // If Supabase insertion fails, stop and throw to outer catch block
+            if (supabaseError) throw supabaseError;
 
+            // 3. Attempt to send email via EmailJS (works both online and offline scenarios)
+            // By wrapping this in its own try/catch, if EmailJS fails,
+            // we still show success because the message safely saved to Supabase.
+            try {
+                await emailjs.send(
+                    'service_qxyga4v',      // Service ID
+                    'template_t5b2358',     // Template ID
+                    {
+                        name: formData.name,
+                        email: formData.email,
+                        subject: formData.subject,
+                        message: formData.message,
+                    },
+                    'C9Ua8dAJ6EEfSSQkk'     // Public Key
+                );
+                console.log("Email sent successfully via EmailJS.");
+            } catch (emailError) {
+                // Log email error but don't prevent the overall success alert
+                console.error("EmailJS sending failed:", emailError);
+            }
+
+            // 4. Show success alert and clear the form
             setNotification({ type: 'success', message: 'Message sent successfully!' });
             setFormData({ name: "", email: "", subject: "", message: "" });
 
         } catch (err) {
-            console.error("Error sending message:", err);
+            // Handle errors for Supabase save
+            console.error("Error saving message:", err);
             setNotification({ type: 'error', message: 'Failed to send message. Please try again.' });
         } finally {
-            setLoading(false);
+            setLoading(false); // Hide loader
         }
     };
 

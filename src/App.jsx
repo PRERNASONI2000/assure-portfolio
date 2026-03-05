@@ -6,8 +6,12 @@ import About from './sections/About';
 import Skills from './sections/Skills';
 import Projects from './sections/Projects';
 import Contact from './sections/Contact';
+import { useDynamicFavicon } from './hooks/useDynamicFavicon';
 
 function App() {
+  // Pass the name to generate the dynamic favicon
+  useDynamicFavicon("Prerna Soni");
+
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       <Navbar />

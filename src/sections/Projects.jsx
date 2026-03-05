@@ -39,63 +39,92 @@ const containerVariants = {
 };
 
 const projectVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut"
+        }
+    }
 };
 
 const Projects = () => {
     return (
-        <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-            <SectionTitle title="Some Things I've Built" subtitle="A selection of my recent works" />
+        <section id="projects" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative">
+            {/* Background subtle elements */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary-600/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+
+            <SectionTitle
+                title="Featured Projects"
+                subtitle="A showcase of my recent frontend development work and technical creations."
+            />
 
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
-                className="space-y-24"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16"
             >
                 {projectsData.map((project, index) => (
                     <motion.div
                         key={index}
                         variants={projectVariants}
-                        className={`flex flex-col ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-8 md:gap-12 relative`}
+                        whileHover={{ scale: 1.05 }}
+                        className="group relative flex flex-col bg-card/80 backdrop-blur-sm border border-border/50 rounded-[20px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-400 z-10 dark:shadow-black/40"
                     >
+                        {/* Subtle Card Gradient Background on Hover */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary-600/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
                         {/* Project Image */}
-                        <div className="w-full md:w-3/5 group relative">
-                            <div className="absolute inset-0 bg-primary-600/20 group-hover:bg-transparent transition-colors duration-300 rounded-xl z-10 w-full h-full mix-blend-multiply"></div>
+                        <div className="relative h-56 w-full overflow-hidden">
+                            <div className="absolute inset-0 bg-primary-600/10 group-hover:bg-transparent transition-colors duration-400 z-10"></div>
                             <img
                                 src={project.image}
                                 alt={project.title}
-                                className="w-full h-[300px] md:h-[400px] object-cover rounded-xl shadow-lg border border-border"
+                                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500 ease-out"
                             />
                         </div>
 
                         {/* Project Info */}
-                        <div className={`w-full md:w-2/5 flex flex-col ${index % 2 === 1 ? 'md:items-start' : 'md:items-end md:text-right'} z-20`}>
-                            <p className="text-primary-600 dark:text-primary-500 font-medium mb-2">Featured Project</p>
-                            <h3 className="text-2xl font-bold text-foreground mb-6 hover:text-primary-600 dark:hover:text-primary-500 transition-colors">
-                                <a href={project.live}>{project.title}</a>
+                        <div className="p-6 flex flex-col flex-grow relative z-20">
+                            <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary-500 transition-colors duration-300">
+                                {project.title}
                             </h3>
 
-                            <div className="bg-white dark:bg-card p-6 rounded-xl shadow-md border border-border md:-ml-8 md:mr-0 z-20 mb-6 relative">
-                                <p className="text-muted-foreground text-sm leading-relaxed">
-                                    {project.description}
-                                </p>
+                            <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
+                                {project.description}
+                            </p>
+
+                            {/* Tags */}
+                            <div className="flex flex-wrap gap-2 mb-8">
+                                {project.tags.map((tag, i) => (
+                                    <span
+                                        key={i}
+                                        className="px-3 py-1.5 text-xs font-semibold bg-primary-600/10 text-primary-600 dark:text-primary-400 rounded-full border border-primary-600/20"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
                             </div>
 
-                            <ul className={`flex flex-wrap gap-4 mb-8 text-sm text-foreground/80 font-mono ${index % 2 === 1 ? 'justify-start' : 'justify-end'}`}>
-                                {project.tags.map((tag, i) => (
-                                    <li key={i}>{tag}</li>
-                                ))}
-                            </ul>
-
-                            <div className={`flex gap-4 ${index % 2 === 1 ? 'justify-start' : 'justify-end'}`}>
-                                <a href={project.github} className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-500 transition-colors" aria-label="GitHub Repository">
-                                    <Github size={24} className="transition-transform duration-300 hover:scale-125 hover:rotate-12" />
+                            {/* Buttons */}
+                            <div className="flex gap-4 mt-auto">
+                                <a
+                                    href={project.live}
+                                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-primary-600 hover:bg-gradient-to-r hover:from-primary-500 hover:to-indigo-500 text-white text-sm font-bold transition-all duration-300 shadow-md hover:shadow-primary-500/25"
+                                    aria-label={`Live Demo of ${project.title}`}
+                                >
+                                    Live Demo <ExternalLink size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </a>
-                                <a href={project.live} className="text-muted-foreground hover:text-primary-600 dark:hover:text-primary-500 transition-colors" aria-label="Live Demo">
-                                    <ExternalLink size={24} className="transition-transform duration-300 hover:scale-125 hover:translate-x-1 hover:-translate-y-1" />
+                                <a
+                                    href={project.github}
+                                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-bold transition-all duration-300 border border-border hover:border-border/80"
+                                    aria-label={`GitHub Repository of ${project.title}`}
+                                >
+                                    GitHub <Github size={16} />
                                 </a>
                             </div>
                         </div>

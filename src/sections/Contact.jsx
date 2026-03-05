@@ -1,9 +1,26 @@
-import React from 'react';
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { supabase } from "../supabaseClient";
-import { motion } from 'framer-motion';
-import { Send, MapPin, Linkedin, Mail, Github } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, MapPin, Linkedin, Mail, Github, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import SectionTitle from '../components/SectionTitle';
+
+const Notification = ({ message, type, onClose }) => {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+            className={`fixed top-24 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl backdrop-blur-md border ${type === 'success'
+                    ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400'
+                    : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
+                }`}
+        >
+            {type === 'success' ? <CheckCircle size={20} className="text-green-500" /> : <AlertCircle size={20} className="text-red-500" />}
+            <p className="font-medium">{message}</p>
+            <button onClick={onClose} className="ml-4 opacity-70 hover:opacity-100 transition-opacity">×</button>
+        </motion.div>
+    );
+};
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -13,180 +30,241 @@ const Contact = () => {
         message: "",
     });
 
+    const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [notification, setNotification] = useState(null);
+
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => {
+                setNotification(null);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.name.trim()) newErrors.name = "Name is required";
+
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = "Please enter a valid email address";
+        }
+
+        if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+        if (!formData.message.trim()) newErrors.message = "Message is required";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.id]: e.target.value,
-        });
+        const { id, value } = e.target;
+        setFormData(prev => ({ ...prev, [id]: value }));
+
+        // Clear error when user starts typing
+        if (errors[id]) {
+            setErrors(prev => ({ ...prev, [id]: null }));
+        }
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) return;
+
         setLoading(true);
 
         try {
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from("contacts")
-                .insert([
-                    {
-                        name: formData.name,
-                        email: formData.email,
-                        subject: formData.subject,
-                        message: formData.message,
-                    },
-                ]);
+                .insert([{
+                    name: formData.name,
+                    email: formData.email,
+                    subject: formData.subject,
+                    message: formData.message,
+                }]);
 
-            if (error) {
-                console.error("Supabase Error Details:", error.message || error);
-                alert(`❌ Error sending message: ${error.message || "Unknown error"}`);
-            } else {
-                alert("✅ Message sent successfully!");
-                setFormData({
-                    name: "",
-                    email: "",
-                    subject: "",
-                    message: "",
-                });
-            }
+            if (error) throw error;
+
+            setNotification({ type: 'success', message: 'Message sent successfully!' });
+            setFormData({ name: "", email: "", subject: "", message: "" });
+
         } catch (err) {
-            console.error("Unexpected Error:", err);
-            alert("❌ An unexpected error occurred while sending your message.");
+            console.error("Error sending message:", err);
+            setNotification({ type: 'error', message: 'Failed to send message. Please try again.' });
         } finally {
             setLoading(false);
         }
     };
+
+    const inputClasses = (error) => `
+        w-full px-4 py-3.5 rounded-xl bg-background/50 dark:bg-card/50 
+        border ${error ? 'border-red-500 focus:ring-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : 'border-border focus:border-primary-500 focus:ring-primary-500/20'} 
+        focus:ring-4 outline-none transition-all duration-300 backdrop-blur-sm
+    `;
+
     return (
-        <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative">
+            {/* Background elements */}
+            <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-primary-600/5 blur-[100px] rounded-full pointer-events-none -z-10"></div>
+
+            <AnimatePresence>
+                {notification && (
+                    <Notification
+                        type={notification.type}
+                        message={notification.message}
+                        onClose={() => setNotification(null)}
+                    />
+                )}
+            </AnimatePresence>
+
             <SectionTitle title="Get In Touch" subtitle="I'm currently looking for new opportunities, my inbox is always open." />
 
-            <div className="flex flex-col md:flex-row gap-12 mt-12">
+            <div className="flex flex-col lg:flex-row gap-16 mt-16 relative z-10">
                 {/* Contact Info */}
                 <motion.div
-                    initial={{ opacity: 0, x: -50 }}
+                    initial={{ opacity: 0, x: -30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.5 }}
-                    className="md:w-1/3 space-y-8"
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="lg:w-5/12 space-y-10"
                 >
                     <div>
-                        <h3 className="text-2xl font-bold text-foreground mb-6">Contact Information</h3>
-                        <p className="text-muted-foreground mb-8">
-                            Fill up the form and I will get back to you within 24 hours.
+                        <h3 className="text-3xl font-bold text-foreground mb-4">Let's talk business.</h3>
+                        <p className="text-muted-foreground text-lg leading-relaxed">
+                            Have a project in mind or just want to say hi? Fill up the form and I'll get back to you within 24 hours.
                         </p>
                     </div>
 
-                    <div className="space-y-6">
-                        <div className="flex items-center space-x-4">
-                            <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full text-primary-600 dark:text-primary-500">
-                                <a href="https://www.linkedin.com/in/prerna-soni-472a9323a"><Linkedin size={24} className="transition-transform duration-300 hover:scale-125 hover:-translate-y-1" /></a>
-                            </div>
-                            <div>
-                                <p className="text-foreground font-medium">Linkedin</p>
-                                <p className="text-muted-foreground">Connect with me</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full text-primary-600 dark:text-primary-500">
-                                <a href="mailto:prernasoni2000@gmail.com"> <Mail size={24} className="transition-transform duration-300 hover:scale-125 hover:-rotate-12" /></a>
-                            </div>
-                            <div>
-                                <p className="text-foreground font-medium">Email</p>
-                                <p className="text-muted-foreground">prernasoni2000@gmail.com</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-full text-primary-600 dark:text-primary-500">
-                                <a href="https://github.com/PRERNASONI2000"><Github size={24} className="transition-transform duration-300 hover:scale-125 hover:-translate-y-1" /></a>
-                            </div>
-                            <div>
-                                <p className="text-foreground font-medium">Github</p>
-                                <p className="text-muted-foreground">View my projects</p>
-                            </div>
-                        </div>
+                    <div className="space-y-8">
+                        {[
+                            { icon: Linkedin, label: 'LinkedIn', value: 'Connect with me', href: 'https://www.linkedin.com/in/prerna-soni-472a9323a' },
+                            { icon: Mail, label: 'Email', value: 'prernasoni2000@gmail.com', href: 'mailto:prernasoni2000@gmail.com' },
+                            { icon: Github, label: 'GitHub', value: 'View my projects', href: 'https://github.com/PRERNASONI2000' }
+                        ].map((item, index) => (
+                            <a
+                                key={index}
+                                href={item.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group flex items-center space-x-6 p-4 rounded-2xl hover:bg-card/50 transition-colors duration-300"
+                            >
+                                <div className="bg-primary-600/10 p-4 rounded-xl text-primary-600 dark:text-primary-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(var(--primary-600),0.3)] group-hover:-translate-y-1">
+                                    <item.icon size={24} className="transition-transform duration-300" />
+                                </div>
+                                <div>
+                                    <p className="text-foreground font-semibold text-lg">{item.label}</p>
+                                    <p className="text-muted-foreground group-hover:text-foreground transition-colors">{item.value}</p>
+                                </div>
+                            </a>
+                        ))}
                     </div>
                 </motion.div>
 
                 {/* Contact Form */}
                 <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="md:w-2/3"
+                    transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                    className="lg:w-7/12"
                 >
-                    <form onSubmit={handleSubmit} className="bg-white dark:bg-card p-8 rounded-2xl shadow-sm border border-border space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label htmlFor="name" className="text-sm font-medium text-foreground">
-                                    Your Name
-                                </label>
+                    <div className="bg-card/80 backdrop-blur-xl p-8 sm:p-10 rounded-[32px] shadow-xl border border-border/50 relative overflow-hidden group">
+                        {/* Soft Glow Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                        <form onSubmit={handleSubmit} className="space-y-6 relative z-10" noValidate>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div className="space-y-2 relative">
+                                    <label htmlFor="name" className="text-sm font-semibold text-foreground/80 ml-1">Your Name</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        className={inputClasses(errors.name)}
+                                        placeholder="John Doe"
+                                    />
+                                    <AnimatePresence>
+                                        {errors.name && (
+                                            <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="text-red-500 text-sm mt-1 ml-1 font-medium">{errors.name}</motion.p>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                                <div className="space-y-2 relative">
+                                    <label htmlFor="email" className="text-sm font-semibold text-foreground/80 ml-1">Your Email</label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className={inputClasses(errors.email)}
+                                        placeholder="john@example.com"
+                                    />
+                                    <AnimatePresence>
+                                        {errors.email && (
+                                            <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="text-red-500 text-sm mt-1 ml-1 font-medium">{errors.email}</motion.p>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2 relative">
+                                <label htmlFor="subject" className="text-sm font-semibold text-foreground/80 ml-1">Subject</label>
                                 <input
                                     type="text"
-                                    id="name"
-                                    value={formData.name}
+                                    id="subject"
+                                    value={formData.subject}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-md bg-white dark:bg-background border border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500 outline-none transition-colors"
-                                    placeholder="John Doe"
-                                    required
+                                    className={inputClasses(errors.subject)}
+                                    placeholder="Project Inquiry"
                                 />
+                                <AnimatePresence>
+                                    {errors.subject && (
+                                        <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="text-red-500 text-sm mt-1 ml-1 font-medium">{errors.subject}</motion.p>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                                    Your Email
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    value={formData.email}
+
+                            <div className="space-y-2 relative">
+                                <label htmlFor="message" className="text-sm font-semibold text-foreground/80 ml-1">Message</label>
+                                <textarea
+                                    id="message"
+                                    rows="5"
+                                    value={formData.message}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-md bg-white dark:bg-background border border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500 outline-none transition-colors"
-                                    placeholder="john@example.com"
-                                    required
-                                />
+                                    className={`${inputClasses(errors.message)} resize-none`}
+                                    placeholder="Tell me about your project..."
+                                ></textarea>
+                                <AnimatePresence>
+                                    {errors.message && (
+                                        <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="text-red-500 text-sm mt-1 ml-1 font-medium">{errors.message}</motion.p>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                        </div>
 
-                        <div className="space-y-2">
-                            <label htmlFor="subject" className="text-sm font-medium text-foreground">
-                                Subject
-                            </label>
-                            <input
-                                type="text"
-                                id="subject"
-                                value={formData.subject}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 rounded-md bg-white dark:bg-background border border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500 outline-none transition-colors"
-                                placeholder="Project Inquiry"
-                                required
-                            />
-                        </div>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full relative overflow-hidden group inline-flex items-center justify-center px-8 py-4 rounded-xl text-white font-bold bg-primary-600 hover:bg-primary-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--primary-600),0.4)] hover:scale-[1.02]"
+                            >
+                                {/* Button Hover Gradient */}
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                        <div className="space-y-2">
-                            <label htmlFor="message" className="text-sm font-medium text-foreground">
-                                Message
-                            </label>
-                            <textarea
-                                id="message"
-                                rows="5"
-                                value={formData.message}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 rounded-md bg-white dark:bg-background border border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500 outline-none transition-colors resize-none"
-                                placeholder="How can I help you?"
-                                required
-                            ></textarea>
-                        </div>
-
-                        <button
-                            type="submit" disabled={loading}
-                            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        >
-                            <Send className="mr-2 transition-transform duration-300 hover:scale-125 hover:translate-x-1 hover:-translate-y-1" size={18} />
-                            {loading ? "Sending..." : "Send Message"}
-                        </button>
-                    </form>
+                                <span className="relative z-10 flex items-center gap-2">
+                                    {loading ? (
+                                        <Loader2 className="animate-spin text-white" size={20} />
+                                    ) : (
+                                        <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                    )}
+                                    {loading ? "Sending..." : "Send Message"}
+                                </span>
+                            </button>
+                        </form>
+                    </div>
                 </motion.div>
             </div>
         </section>

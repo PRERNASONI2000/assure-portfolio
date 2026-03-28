@@ -1,16 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
+import { ExternalLink, Github, Triangle } from 'lucide-react';
 import SectionTitle from '../components/SectionTitle';
 
 const projectsData = [
     {
-        title: 'E-commerce Platform',
-        description: 'A full-stack e-commerce solution with user authentication, payment processing, and a comprehensive admin dashboard.',
-        tags: ['React', 'Node.js', 'MongoDB', 'Stripe'],
-        image: 'https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        github: '#',
-        live: '#'
+        title: 'Admin Dashboard Dashboard',
+        description: 'A modern and responsive admin dashboard built with React, featuring sidebar navigation, dashboard statistics cards, sales overview chart, recent activity section, and light/dark mode UI for a clean management experience.',
+         tags: ['React', 'JavaScript', 'CSS', 'Responsive Design', 'Chart UI'],
+        image: '/admin-panel.png',
+        github: 'https://github.com/PRERNASONI2000/ReactAdminPanel',
+        live: 'https://prernasoni2000.github.io/ReactAdminPanel/'
     },
     {
         title: 'Task Management App',
@@ -21,12 +21,12 @@ const projectsData = [
         live: '#'
     },
     {
-        title: 'AI Image Generator',
-        description: 'A web application that leverages OpenAI\'s DALL-E API to generate striking images based on user text prompts.',
-        tags: ['React', 'OpenAI API', 'Express'],
-        image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        github: '#',
-        live: '#'
+       title: 'Interior Design Landing Page',
+  description: 'A modern and responsive interior design landing page designed in Figma and developed in React, featuring a custom slider, reusable components, and a clean user-focused UI.',
+  tags: ['React', 'Vite', 'TailwindCSS', 'Figma', 'Responsive Design'],
+        image: '/idesign.png',
+        vercel: 'https://vercel.com/prernasoni2000s-projects',
+        live: 'https://idesign-kohl.vercel.app/'
     }
 ];
 
@@ -119,13 +119,21 @@ const Projects = () => {
                                 >
                                     Live Demo <ExternalLink size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </a>
-                                <a
+                                {project.github ? (<a
                                     href={project.github}
                                     className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-bold transition-all duration-300 border border-border hover:border-border/80"
                                     aria-label={`GitHub Repository of ${project.title}`}
                                 >
                                     GitHub <Github size={16} />
+                                </a>): project.vercel? (
+                                    <a
+                                    href={project.vercel}
+                                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-bold transition-all duration-300 border border-border hover:border-border/80"
+                                    aria-label={`GitHub Repository of ${project.title}`}
+                                >
+                                    Vercel <Triangle size={16} />
                                 </a>
+                                ): null}
                             </div>
                         </div>
                     </motion.div>

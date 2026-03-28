@@ -13,12 +13,12 @@ const projectsData = [
         live: 'https://prernasoni2000.github.io/ReactAdminPanel/'
     },
     {
-        title: 'Task Management App',
-        description: 'A sleek, intuitive task management tool with real-time updates, drag-and-drop functionality, and team collaboration features.',
-        tags: ['Next.js', 'Tailwind', 'Supabase', 'Framer Motion'],
-        image: 'https://images.unsplash.com/photo-1540350394557-8d14678e7f91?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+        title: 'UGCStudioAI',
+        description: 'World’s First UGC Video Maker that Creates Realistic, Human-Like UGC Videos for Your Brand in 20+ Languages, in Just Minutes.',
+        tags: ['HTML', 'BootStrap', 'CSS', 'JQuery Plugins', 'Responsive Design'],
+        image: '/ugcstudio.png',
         github: '#',
-        live: '#'
+        live: 'https://ugcstudioai.pro/partners/'
     },
     {
        title: 'Interior Design Landing Page',

@@ -5,12 +5,13 @@ import SectionTitle from '../components/SectionTitle';
 
 const projectsData = [
     {
-        title: 'Admin Dashboard Dashboard',
-        description: 'A modern and responsive admin dashboard built with React, featuring sidebar navigation, dashboard statistics cards, sales overview chart, recent activity section, and light/dark mode UI for a clean management experience.',
-         tags: ['React', 'JavaScript', 'CSS', 'Responsive Design', 'Chart UI'],
-        image: '/admin-panel.png',
-        github: 'https://github.com/PRERNASONI2000/ReactAdminPanel',
-        live: 'https://prernasoni2000.github.io/ReactAdminPanel/'
+         title: 'SpendFlow - SaaS Expense Tracker',
+  description: 'A full-stack SaaS expense tracking application built using React, Tailwind CSS, Node.js, Express, and MongoDB Atlas. Features JWT authentication, userwise expense management, real-time dashboard, and is deployed on Vercel & Render.',
+  tags: ['React', 'TailwindCSS', 'Node.js', 'Express.js', 'MongoDB Atlas', 'REST API'],
+        image: '/exp-t.png',
+        vercel: 'https://vercel.com/prernasoni2000s-projects',
+        live: 'https://exp-tracker-ui.vercel.app/'
+        
     },
     {
         title: 'UGCStudioAI',
@@ -19,6 +20,14 @@ const projectsData = [
         image: '/ugcstudio.png',
         github: '#',
         live: 'https://ugcstudioai.pro/partners/'
+    },
+    {
+     title: 'Admin Dashboard Dashboard',
+        description: 'A modern and responsive admin dashboard built with React, featuring sidebar navigation, dashboard statistics cards, sales overview chart, recent activity section, and light/dark mode UI for a clean management experience.',
+         tags: ['React', 'JavaScript', 'CSS', 'Responsive Design', 'Chart UI'],
+        image: '/admin-panel.png',
+        github: 'https://github.com/PRERNASONI2000/ReactAdminPanel',
+        live: 'https://prernasoni2000.github.io/ReactAdminPanel/'
     },
     {
        title: 'Interior Design Landing Page',
